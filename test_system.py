@@ -5,6 +5,8 @@ Tests the basic functionality of the reporting system without sending emails/Sla
 
 import sys
 import logging
+import tempfile
+import os
 
 sys.path.insert(0, 'src')
 
@@ -102,13 +104,17 @@ def test_report_generation(jira_client):
         logger.info(f"✓ HTML report formatted ({len(html_report)} characters)")
         
         # Save sample reports
-        with open('/tmp/sample_report.txt', 'w') as f:
-            f.write(text_report)
-        logger.info("✓ Sample text report saved to /tmp/sample_report.txt")
+        temp_dir = tempfile.gettempdir()
+        text_path = os.path.join(temp_dir, 'sample_report.txt')
+        html_path = os.path.join(temp_dir, 'sample_report.html')
         
-        with open('/tmp/sample_report.html', 'w') as f:
+        with open(text_path, 'w') as f:
+            f.write(text_report)
+        logger.info(f"✓ Sample text report saved to {text_path}")
+        
+        with open(html_path, 'w') as f:
             f.write(html_report)
-        logger.info("✓ Sample HTML report saved to /tmp/sample_report.html")
+        logger.info(f"✓ Sample HTML report saved to {html_path}")
         
         return True
         
@@ -144,8 +150,9 @@ def main():
     logger.info("\n" + "=" * 80)
     logger.info("All tests passed! ✓")
     logger.info("=" * 80)
+    temp_dir = tempfile.gettempdir()
     logger.info("\nNext steps:")
-    logger.info("1. Check sample reports in /tmp/sample_report.txt and /tmp/sample_report.html")
+    logger.info(f"1. Check sample reports in {temp_dir}/sample_report.txt and {temp_dir}/sample_report.html")
     logger.info("2. Configure email and/or Slack in config.json")
     logger.info("3. Run: python daily_report.py")
     logger.info("4. Set up scheduling with: python scheduler.py")

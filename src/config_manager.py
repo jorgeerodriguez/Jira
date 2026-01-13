@@ -5,7 +5,6 @@ Handles loading and validation of configuration from config.json
 
 import os
 import json
-import sys
 from typing import Dict, Optional, List
 
 

@@ -4,9 +4,8 @@ Consolidates various report types into reusable classes
 """
 
 from typing import List, Dict
-from datetime import datetime, timedelta
-from collections import Counter, defaultdict
-import pandas as pd
+from datetime import datetime
+from collections import Counter
 import logging
 
 logger = logging.getLogger(__name__)

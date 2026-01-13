@@ -6,10 +6,14 @@ Runs the daily report at scheduled times
 import schedule
 import time
 import logging
+import sys
 from datetime import datetime
 
+# Add src to path for imports
+sys.path.insert(0, 'src')
+
 from daily_report import DailyReporter
-from src.config_manager import ConfigManager
+from config_manager import ConfigManager
 
 # Configure logging
 logging.basicConfig(
