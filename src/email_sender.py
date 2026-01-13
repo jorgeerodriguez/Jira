@@ -183,8 +183,9 @@ def create_email_sender(config: dict) -> EmailSender:
     if not email_address or not password:
         raise ValueError("Email address and password are required")
     
-    # Use Gmail sender for Gmail addresses
-    if 'gmail.com' in email_address.lower() and smtp_server == 'smtp.gmail.com':
+    # Use Gmail sender for Gmail addresses (check domain properly)
+    email_domain = email_address.lower().split('@')[-1] if '@' in email_address else ''
+    if email_domain == 'gmail.com' and smtp_server == 'smtp.gmail.com':
         return GmailSender(email_address, password)
     
     return EmailSender(smtp_server, smtp_port, email_address, password)
