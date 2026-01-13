@@ -12,7 +12,8 @@ from datetime import datetime
 # Add src to path for imports
 sys.path.insert(0, 'src')
 
-from daily_report import DailyReporter
+# Now import from root directory and src
+import daily_report
 from config_manager import ConfigManager
 
 # Configure logging
@@ -35,7 +36,7 @@ def run_daily_report():
     
     try:
         config_manager = ConfigManager()
-        reporter = DailyReporter(config_manager)
+        reporter = daily_report.DailyReporter(config_manager)
         success = reporter.run()
         
         if success:

@@ -7,6 +7,7 @@ import sys
 import logging
 import tempfile
 import os
+from datetime import datetime
 
 sys.path.insert(0, 'src')
 
@@ -103,10 +104,11 @@ def test_report_generation(jira_client):
         html_report = report_generator.format_digest_as_html(digest)
         logger.info(f"✓ HTML report formatted ({len(html_report)} characters)")
         
-        # Save sample reports
+        # Save sample reports with timestamp to avoid conflicts
         temp_dir = tempfile.gettempdir()
-        text_path = os.path.join(temp_dir, 'sample_report.txt')
-        html_path = os.path.join(temp_dir, 'sample_report.html')
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        text_path = os.path.join(temp_dir, f'sample_report_{timestamp}.txt')
+        html_path = os.path.join(temp_dir, f'sample_report_{timestamp}.html')
         
         with open(text_path, 'w') as f:
             f.write(text_report)
@@ -152,7 +154,7 @@ def main():
     logger.info("=" * 80)
     temp_dir = tempfile.gettempdir()
     logger.info("\nNext steps:")
-    logger.info(f"1. Check sample reports in {temp_dir}/sample_report.txt and {temp_dir}/sample_report.html")
+    logger.info(f"1. Check sample reports in {temp_dir} (sample_report_*.txt and *.html)")
     logger.info("2. Configure email and/or Slack in config.json")
     logger.info("3. Run: python daily_report.py")
     logger.info("4. Set up scheduling with: python scheduler.py")

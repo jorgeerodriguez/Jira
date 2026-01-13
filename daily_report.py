@@ -114,8 +114,10 @@ class DailyReporter:
         if project_keys is None:
             project_keys = self.config_manager.get('report_projects')
             if project_keys is None:
-                # Default to common projects
-                project_keys = ['DEVOPS', 'EIT']
+                # Default projects - these should be updated in config.json
+                default_projects = self.config_manager.get('default_report_projects', ['DEVOPS', 'EIT'])
+                logger.warning(f"No report_projects configured, using defaults: {default_projects}")
+                project_keys = default_projects
         
         digest = self.report_generator.generate_daily_digest(project_keys)
         logger.info(f"Report generated with {len(digest.get('projects', []))} projects")

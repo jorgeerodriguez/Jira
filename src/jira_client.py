@@ -75,7 +75,7 @@ class JiraClient:
             return issues
         except Exception as e:
             logger.error(f"Error searching issues: {e}")
-            return []
+            raise  # Re-raise to let caller handle the error
     
     def get_project_issues(self, project_key: str, status: Optional[str] = None) -> List:
         """

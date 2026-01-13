@@ -107,8 +107,8 @@ class EmailSender:
                 if server:
                     try:
                         server.quit()
-                    except:
-                        pass
+                    except (smtplib.SMTPServerDisconnected, Exception) as e_quit:
+                        logger.warning(f"Error during server.quit(): {e_quit}")
                         
         except Exception as e:
             logger.error(f"Unexpected error sending email: {e}")

@@ -126,7 +126,8 @@ class SlackNotifier:
             if blocked["total_blocked"] > 0:
                 blocked_text = f"*🚫 Blocked Issues:* {blocked['total_blocked']}\n"
                 for issue in blocked["issues"][:3]:  # Show top 3
-                    blocked_text += f"• `{issue['key']}` - {issue['summary'][:50]}...\n"
+                    summary_truncated = issue['summary'][:DEFAULT_SUMMARY_TRUNCATE_LENGTH] + '...' if len(issue['summary']) > DEFAULT_SUMMARY_TRUNCATE_LENGTH else issue['summary']
+                    blocked_text += f"• `{issue['key']}` - {summary_truncated}\n"
                 
                 blocks.append({
                     "type": "section",

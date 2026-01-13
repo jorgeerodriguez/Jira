@@ -34,7 +34,16 @@ class ConfigManager:
         Returns:
             Dictionary containing configuration data, or None if loading fails
         """
-        config_path = os.path.join(os.getcwd(), self.config_file)
+        # Use absolute path based on the module location
+        if os.path.isabs(self.config_file):
+            config_path = self.config_file
+        else:
+            # Look for config in current working directory first, then script directory
+            config_path = os.path.join(os.getcwd(), self.config_file)
+            if not os.path.exists(config_path):
+                # Fallback to script directory
+                script_dir = os.path.dirname(os.path.abspath(__file__))
+                config_path = os.path.join(os.path.dirname(script_dir), self.config_file)
         
         if not os.path.exists(config_path):
             print(f"Error: Configuration file not found at '{config_path}'")

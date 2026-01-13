@@ -10,6 +10,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Configuration constants
+DEFAULT_SUMMARY_TRUNCATE_LENGTH = 60
+DEFAULT_OLD_BACKLOG_THRESHOLD_DAYS = 50
+
 
 class ReportGenerator:
     """Generates various reports from Jira data"""
@@ -104,9 +108,10 @@ class ReportGenerator:
             report["issues"].append(issue_data)
             
             # Check if due date is set
-            if hasattr(issue.fields, 'duedate') and issue.fields.duedate:
-                due_date = datetime.strptime(issue.fields.duedate, '%Y-%m-%d')
-                if due_date < datetime.now():
+            due_date = getattr(issue.fields, 'duedate', None)
+            if due_date:
+                due_date_obj = datetime.strptime(due_date, '%Y-%m-%d')
+                if due_date_obj < datetime.now():
                     report["behind_schedule"].append(issue_data)
             else:
                 report["without_dates"].append(issue_data)
