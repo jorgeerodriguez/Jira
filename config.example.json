@@ -1,0 +1,46 @@
+{
+  "_comment": "Jira Reporting System Configuration File",
+  "_instructions": "Copy this file to config.json and fill in your credentials",
+  
+  "jira_server": "https://your-company.atlassian.net",
+  "jira_email": "your.email@company.com",
+  "jira_api_token": "your_jira_api_token_here",
+  
+  "email_address": "your.email@gmail.com",
+  "email_password": "your_gmail_app_password",
+  "smtp_server": "smtp.gmail.com",
+  "smtp_port": 587,
+  
+  "slack_webhook_url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL",
+  "slack_channel": "#jira-reports",
+  
+  "report_projects": ["DEVOPS", "EIT"],
+  "email_recipients": [
+    "recipient1@company.com",
+    "recipient2@company.com"
+  ],
+  
+  "_gmail_instructions": [
+    "For Gmail:",
+    "1. Enable 2-factor authentication on your Google account",
+    "2. Go to https://myaccount.google.com/apppasswords",
+    "3. Generate an app-specific password",
+    "4. Use that password in email_password field"
+  ],
+  
+  "_slack_instructions": [
+    "For Slack:",
+    "1. Go to https://api.slack.com/apps",
+    "2. Create a new app or use existing",
+    "3. Enable Incoming Webhooks",
+    "4. Create a webhook for your channel",
+    "5. Copy the webhook URL to slack_webhook_url field"
+  ],
+  
+  "_jira_instructions": [
+    "For Jira:",
+    "1. Go to https://id.atlassian.com/manage-profile/security/api-tokens",
+    "2. Create an API token",
+    "3. Copy the token to jira_api_token field"
+  ]
+}
