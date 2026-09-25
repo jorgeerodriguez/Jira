@@ -1,6 +1,3 @@
-
-
-
 import smtplib
 import os
 import sys
@@ -11,21 +8,20 @@ import logging
 # Configure basic logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def send_status_email(subject, body_text, sender_email, receiver_email,
-                        smtp_server, smtp_port, smtp_username, smtp_password):
+
+def send_status_email_gmail(subject, body_text, sender_email, receiver_email,
+                             smtp_server, smtp_port, app_password):
     """
-    Sends an email with the given subject and body.
+    Sends an email using Gmail App Password authentication.
 
     Args:
         subject (str): The subject of the email.
         body_text (str): The plain text body of the email.
         sender_email (str): The email address of the sender.
         receiver_email (str or list): The email address(es) of the recipient(s).
-                                      Can be a single string or a list of strings.
-        smtp_server (str): The SMTP server hostname or IP address.
-        smtp_port (int): The SMTP server port.
-        smtp_username (str): The username for SMTP authentication.
-        smtp_password (str): The password for SMTP authentication.
+        smtp_server (str): The SMTP server hostname.
+        smtp_port (int): The SMTP server port (typically 587 for Gmail).
+        app_password (str): Gmail App Password (not regular password).
 
     Returns:
         bool: True if the email was sent successfully, False otherwise.
@@ -42,37 +38,27 @@ def send_status_email(subject, body_text, sender_email, receiver_email,
             recipients_list = [receiver_email]
             msg['To'] = receiver_email
 
-        # Connect to the SMTP server
-        # Example for Gmail: smtp_server='smtp.gmail.com', smtp_port=587
-        # Example for Outlook/Office365: smtp_server='smtp.office365.com', smtp_port=587
-        # For other providers, check their SMTP settings.
-        # Use smtplib.SMTP_SSL() for servers requiring SSL from the start (e.g., port 465)
+        server = None
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
         
-        server = None # Initialize server to None for the finally block
-        if smtp_port == 465: # SSL connection
-            server = smtplib.SMTP_SSL(smtp_server, smtp_port)
-        else: # TLS connection (typically port 587 or 25)
-            server = smtplib.SMTP(smtp_server, smtp_port)
-            server.ehlo()  # Extended Hello to server
-            server.starttls()  # Secure the connection
-            server.ehlo()  # Re-identify ourselves as an ESMTP client
-
-        server.login(smtp_username, smtp_password)
+        # Authenticate using App Password
+        server.login(sender_email, app_password)
+        
         server.sendmail(sender_email, recipients_list, msg.as_string())
         
         logging.info(f"Email sent successfully to {', '.join(recipients_list)}.")
         return True
 
     except smtplib.SMTPAuthenticationError as e:
-        logging.error(f"SMTP Authentication Error: {e}. Check username/password. If using Gmail, consider 'App Passwords'.")
+        logging.error(f"SMTP Authentication Error: {e}. Check your email and app password.")
         return False
     except smtplib.SMTPServerDisconnected as e:
-        logging.error(f"SMTP Server Disconnected: {e}. This might be due to TLS/SSL issues or server problems.")
+        logging.error(f"SMTP Server Disconnected: {e}.")
         return False
-    except smtplib.SMTPConnectError as e:
-        logging.error(f"SMTP Connection Error: {e}. Check SMTP server address and port.")
-        return False
-    except smtplib.SMTPException as e: # Catch other SMTP related errors
+    except smtplib.SMTPException as e:
         logging.error(f"SMTP Error: {e}")
         return False
     except Exception as e:
@@ -82,14 +68,11 @@ def send_status_email(subject, body_text, sender_email, receiver_email,
         if server:
             try:
                 server.quit()
-            except smtplib.SMTPServerDisconnected:
-                logging.warning("Server was already disconnected.")
             except Exception as e_quit:
                 logging.error(f"Error during server.quit(): {e_quit}")
 
 
 def generate_status_report():
-    # Example: Collect some data for the report
     tasks_completed = ["Task A", "Task B"]
     issues_found = ["Issue X"]
     system_status = "All systems operational."
@@ -111,6 +94,7 @@ def generate_status_report():
     return "\n".join(report_lines)
 
 
+<<<<<<< HEAD
 # Import the function if it's in daily_status_mailer.py
 # from daily_status_mailer import send_status_email 
 
@@ -137,23 +121,48 @@ if __name__ == "__main__":
         sys.exit(1)
     else:
         # --- Generate Report Content ---
+=======
+if __name__ == "__main__":
+    # --- Gmail Configuration ---
+    # To use Gmail:
+    # 1. Enable 2-Factor Authentication on your Google Account
+    # 2. Go to https://myaccount.google.com/apppasswords
+    # 3. Generate an App Password for "Mail"
+    # 4. Use that 16-character password (not your regular password)
+    
+    SMTP_SERVER = "smtp.gmail.com"
+    SMTP_PORT = 587
+    SENDER_EMAIL = os.environ.get('GMAIL_ADDRESS', 'your-email@gmail.com')
+    GMAIL_APP_PASSWORD = os.environ.get('GMAIL_APP_PASSWORD', 'your-app-password-here')
+    RECEIVER_EMAIL = "recipient_email@example.com"
+    
+    try:
+        # Generate report
+>>>>>>> 8c0abbe9e1f2f0f7eac93d41078f72929dc68476
         report_subject = "Daily Status Report - Project Alpha"
-        report_body = generate_status_report() # Using the example function from above
-
-        # --- Send the Email ---
-        success = send_status_email(
+        report_body = generate_status_report()
+        
+        # Send email using Gmail
+        success = send_status_email_gmail(
             subject=report_subject,
             body_text=report_body,
             sender_email=SENDER_EMAIL,
             receiver_email=RECEIVER_EMAIL,
             smtp_server=SMTP_SERVER,
             smtp_port=SMTP_PORT,
-            smtp_username=SMTP_USERNAME,
-            smtp_password=SMTP_PASSWORD
+            app_password=GMAIL_APP_PASSWORD
         )
-
+        
         if success:
-            logging.info("Status report email process completed successfully.")
+            logging.info("Status report email sent successfully.")
         else:
+<<<<<<< HEAD
             logging.error("Failed to send the status report email.")
             logging.error("Failed to send the status report email.")
+=======
+            logging.error("Failed to send status report email.")
+            
+    except Exception as e:
+        logging.error(f"Error in main execution: {e}")
+
+>>>>>>> 8c0abbe9e1f2f0f7eac93d41078f72929dc68476
