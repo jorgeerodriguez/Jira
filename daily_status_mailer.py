@@ -3,6 +3,7 @@
 
 import smtplib
 import os
+import sys
 from email.mime.text import MIMEText
 from email.header import Header
 import logging
@@ -110,7 +111,6 @@ def generate_status_report():
     return "\n".join(report_lines)
 
 
-
 # Import the function if it's in daily_status_mailer.py
 # from daily_status_mailer import send_status_email 
 
@@ -119,21 +119,22 @@ if __name__ == "__main__":
     # !! IMPORTANT: Do NOT hardcode passwords in your script for production.
     # Use environment variables or a secure config management system.
     SMTP_SERVER = "smtp.audacy.com"  # Or your SMTP server
-    SMTP_PORT = 587  # 587 for TLS, 465 for SSL
-    SENDER_EMAIL = "jorge.rodriguez@@audacy.com"
+    SMTP_PORT = int(os.environ.get('MY_SMTP_PORT', '587'))  # 587 for TLS, 465 for SSL
+    SENDER_EMAIL = "jorge.rodriguez@audacy.com"
 
     # For security, get credentials from environment variables
-    SMTP_USERNAME = os.environ.get('MY_SMTP_USERNAME') # Or SENDER_EMAIL
-    SMTP_PASSWORD = os.environ.get('MY_SMTP_PASSWORD')
+    SMTP_USERNAME = os.environ.get('MY_SMTP_USERNAME', '')  # Or SENDER_EMAIL
+    SMTP_PASSWORD = os.environ.get('MY_SMTP_PASSWORD', '')
 
-    SMTP_USERNAME = 'Jorge.Rodriguez@@audacy.com'
-    SMTP_PASSWORD = 'password' # Replace with your actual password or use environment variables
+    # Optional: use sender email as fallback username if desired
+    # if not SMTP_USERNAME:
+    #     SMTP_USERNAME = SENDER_EMAIL
     
     RECEIVER_EMAIL = "recipient_email@example.com" # Can be a list: ["r1@example.com", "r2@example.com"]
 
     if not SMTP_USERNAME or not SMTP_PASSWORD:
         logging.error("SMTP username or password not found in environment variables.")
-        # exit(1) # Or handle appropriately
+        sys.exit(1)
     else:
         # --- Generate Report Content ---
         report_subject = "Daily Status Report - Project Alpha"
@@ -154,4 +155,5 @@ if __name__ == "__main__":
         if success:
             logging.info("Status report email process completed successfully.")
         else:
+            logging.error("Failed to send the status report email.")
             logging.error("Failed to send the status report email.")
